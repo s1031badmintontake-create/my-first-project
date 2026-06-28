@@ -15,6 +15,7 @@ const empty = {
   purchasePrice: '',
   currentPrice: '',
   purchaseDate: new Date().toISOString().slice(0, 10),
+  currency: 'USD' as 'JPY' | 'USD',
   note: '',
 };
 
@@ -28,12 +29,13 @@ export default function StockForm({ initial, onSave, onCancel }: Props) {
           purchasePrice: String(initial.purchasePrice),
           currentPrice: String(initial.currentPrice),
           purchaseDate: initial.purchaseDate,
+          currency: initial.currency,
           note: initial.note ?? '',
         }
       : empty
   );
 
-  const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,9 +48,12 @@ export default function StockForm({ initial, onSave, onCancel }: Props) {
       purchasePrice: Number(form.purchasePrice),
       currentPrice: Number(form.currentPrice),
       purchaseDate: form.purchaseDate,
+      currency: form.currency,
       note: form.note || undefined,
     });
   };
+
+  const unit = form.currency === 'USD' ? '($)' : '(円)';
 
   return (
     <form className="stock-form" onSubmit={handleSubmit}>
@@ -56,11 +61,18 @@ export default function StockForm({ initial, onSave, onCancel }: Props) {
       <div className="form-row">
         <label>
           ティッカー / コード
-          <input required value={form.ticker} onChange={set('ticker')} placeholder="例: 7203" />
+          <input required value={form.ticker} onChange={set('ticker')} placeholder="例: NVDA / 7203" />
         </label>
         <label>
           銘柄名
-          <input required value={form.name} onChange={set('name')} placeholder="例: トヨタ自動車" />
+          <input required value={form.name} onChange={set('name')} placeholder="例: エヌビディア" />
+        </label>
+        <label>
+          通貨
+          <select value={form.currency} onChange={set('currency')}>
+            <option value="USD">USD（米国株）</option>
+            <option value="JPY">JPY（日本株）</option>
+          </select>
         </label>
       </div>
       <div className="form-row">
@@ -69,11 +81,11 @@ export default function StockForm({ initial, onSave, onCancel }: Props) {
           <input required type="number" min="0.0001" step="any" value={form.quantity} onChange={set('quantity')} />
         </label>
         <label>
-          取得単価 (円)
+          取得単価 {unit}
           <input required type="number" min="0" step="any" value={form.purchasePrice} onChange={set('purchasePrice')} />
         </label>
         <label>
-          現在値 (円)
+          現在値 {unit}
           <input required type="number" min="0" step="any" value={form.currentPrice} onChange={set('currentPrice')} />
         </label>
       </div>

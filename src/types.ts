@@ -6,6 +6,7 @@ export interface Stock {
   purchasePrice: number;
   currentPrice: number;
   purchaseDate: string;
+  currency: 'JPY' | 'USD';
   note?: string;
 }
 

@@ -23,17 +23,18 @@ export default function PriceUpdateForm({ stocks, onUpdate }: Props) {
 
   return (
     <div className="price-update">
-      <h3><RefreshCw size={16} /> 現在値を一括更新</h3>
+      <h3><RefreshCw size={16} /> 現在値を更新</h3>
       <div className="price-grid">
         {stocks.map((stock) => (
           <div key={stock.id} className="price-row">
             <span className="price-ticker">{stock.ticker}</span>
-            <span className="price-current">{formatCurrency(stock.currentPrice)}</span>
+            <span className={`badge badge-${stock.currency.toLowerCase()}`}>{stock.currency}</span>
+            <span className="price-current">{formatCurrency(stock.currentPrice, stock.currency)}</span>
             <input
               type="number"
               min="0"
               step="any"
-              placeholder="新しい値"
+              placeholder={`新しい値 (${stock.currency})`}
               value={prices[stock.id] ?? ''}
               onChange={(e) => setPrices((p) => ({ ...p, [stock.id]: e.target.value }))}
             />
