@@ -7,9 +7,10 @@ interface Props {
   usdJpy: number;
   onEdit: (stock: Stock) => void;
   onDelete: (id: string) => void;
+  onSelect: (stock: Stock) => void;
 }
 
-export default function StockTable({ stocks, usdJpy, onEdit, onDelete }: Props) {
+export default function StockTable({ stocks, usdJpy, onEdit, onDelete, onSelect }: Props) {
   if (stocks.length === 0) {
     return <p className="empty">保有銘柄がありません。「銘柄を追加」ボタンから追加してください。</p>;
   }
@@ -38,7 +39,7 @@ export default function StockTable({ stocks, usdJpy, onEdit, onDelete }: Props) 
             const isPositive = gain >= 0;
             const valueJpy = toJpy(value, stock.currency, usdJpy);
             return (
-              <tr key={stock.id}>
+              <tr key={stock.id} className="stock-row" onClick={() => onSelect(stock)}>
                 <td className="ticker">{stock.ticker}</td>
                 <td>{stock.name}</td>
                 <td className="currency-badge">
@@ -61,7 +62,7 @@ export default function StockTable({ stocks, usdJpy, onEdit, onDelete }: Props) 
                 <td className={`num ${isPositive ? 'gain' : 'loss'}`}>{formatPercent(gainPercent)}</td>
                 <td className="num">{formatJpy(valueJpy)}</td>
                 <td>{stock.purchaseDate}</td>
-                <td className="actions">
+                <td className="actions" onClick={(e) => e.stopPropagation()}>
                   <button className="icon-btn" title="編集" onClick={() => onEdit(stock)}>
                     <Pencil size={16} />
                   </button>
@@ -80,6 +81,7 @@ export default function StockTable({ stocks, usdJpy, onEdit, onDelete }: Props) 
           })}
         </tbody>
       </table>
+      <p className="table-hint">※ 銘柄名をタップすると詳細情報が表示されます</p>
     </div>
   );
 }
