@@ -1,18 +1,14 @@
 import { useState } from 'react';
-import { PlusCircle, RefreshCw, ImageIcon, Settings } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 import type { Stock } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useExchangeRate } from './hooks/useExchangeRate';
-import { useClaudeApi } from './hooks/useClaudeApi';
 import { calcPortfolioSummary } from './utils';
 import SummaryCard from './components/SummaryCard';
 import StockTable from './components/StockTable';
 import StockForm from './components/StockForm';
 import PriceUpdateForm from './components/PriceUpdateForm';
 import ExchangeRateBar from './components/ExchangeRateBar';
-import ApiKeySetup from './components/ApiKeySetup';
-import StockImportModal from './components/StockImportModal';
-import StockDetailModal from './components/StockDetailModal';
 import './App.css';
 
 const INITIAL_STOCKS: Stock[] = [
@@ -25,16 +21,13 @@ const INITIAL_STOCKS: Stock[] = [
   { id: '7', ticker: 'SOFI',  name: 'ソーファイ テクノロジーズ',      quantity: 5,  purchasePrice: 22.50,  currentPrice: 17.88,  purchaseDate: '2024-01-01', currency: 'USD' },
 ];
 
-type View = 'portfolio' | 'add' | 'edit' | 'prices' | 'settings';
+type View = 'portfolio' | 'add' | 'edit' | 'prices';
 
 export default function App() {
   const [stocks, setStocks] = useLocalStorage<Stock[]>('stocks', INITIAL_STOCKS);
   const [view, setView] = useState<View>('portfolio');
   const [editTarget, setEditTarget] = useState<Stock | null>(null);
-  const [showImport, setShowImport] = useState(false);
-  const [detailStock, setDetailStock] = useState<Stock | null>(null);
   const { rate, setRate, fetchRate, loading } = useExchangeRate();
-  const { apiKey, setApiKey, parseScreenshot, getStockInfo } = useClaudeApi();
 
   const summary = calcPortfolioSummary(stocks, rate);
 
@@ -44,10 +37,6 @@ export default function App() {
     );
     setEditTarget(null);
     setView('portfolio');
-  };
-
-  const handleImport = (imported: Stock[]) => {
-    setStocks((prev) => [...prev, ...imported]);
   };
 
   const handleEdit = (stock: Stock) => {
@@ -76,14 +65,8 @@ export default function App() {
           <button className={`nav-btn ${view === 'prices' ? 'active' : ''}`} onClick={nav('prices')}>
             <RefreshCw size={15} /> 値段更新
           </button>
-          <button className="nav-btn" onClick={() => setShowImport(true)} title="スクショから読み込み">
-            <ImageIcon size={15} /> スクショ読込
-          </button>
           <button className="nav-btn btn-add" onClick={() => { setEditTarget(null); setView('add'); }}>
             <PlusCircle size={15} /> 銘柄を追加
-          </button>
-          <button className={`nav-btn ${view === 'settings' ? 'active' : ''}`} onClick={nav('settings')} title="設定">
-            <Settings size={15} />
           </button>
         </nav>
       </header>
@@ -98,7 +81,6 @@ export default function App() {
               usdJpy={rate}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onSelect={setDetailStock}
             />
           </>
         )}
@@ -112,29 +94,7 @@ export default function App() {
         {view === 'prices' && (
           <PriceUpdateForm stocks={stocks} onUpdate={handlePriceUpdate} />
         )}
-        {view === 'settings' && (
-          <ApiKeySetup apiKey={apiKey} onSave={setApiKey} />
-        )}
       </main>
-
-      {showImport && (
-        <StockImportModal
-          hasApiKey={!!apiKey}
-          parseScreenshot={parseScreenshot}
-          onImport={handleImport}
-          onClose={() => setShowImport(false)}
-        />
-      )}
-
-      {detailStock && (
-        <StockDetailModal
-          stock={detailStock}
-          usdJpy={rate}
-          hasApiKey={!!apiKey}
-          getStockInfo={getStockInfo}
-          onClose={() => setDetailStock(null)}
-        />
-      )}
     </div>
   );
 }
