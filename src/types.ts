@@ -20,10 +20,3 @@ export interface Transaction {
   date: string;
   note?: string;
 }
-
-export interface PortfolioSummary {
-  totalCost: number;
-  totalValue: number;
-  totalGain: number;
-  totalGainPercent: number;
-}
