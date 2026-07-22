@@ -24,8 +24,8 @@ export function useClaudeApi() {
 
   const parseScreenshot = async (base64: string, mediaType: string) => {
     const text = await callClaude({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2048,
+      model: 'claude-sonnet-5',
+      max_tokens: 4096,
       messages: [{
         role: 'user',
         content: [
@@ -55,8 +55,8 @@ JSON配列のみを返してください（説明文は不要）。
   const getStockInfo = async (ticker: string, name: string) => {
     const today = new Date().toISOString().slice(0, 10);
     const text = await callClaude({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1536,
+      model: 'claude-sonnet-5',
+      max_tokens: 3072,
       messages: [{
         role: 'user',
         content: `${ticker}（${name}）について、日本語で回答してください。本日は${today}です。半年（6ヶ月）より古い情報は含めないでください。Xの公式アカウントなどSNS上の発信も情報源として参考にして構いません。
