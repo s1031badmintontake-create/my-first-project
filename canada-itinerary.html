@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍁 カナダ旅のしおり 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Serif JP', serif;
+      background: #1a0e06;
+      color: #3D2B1F;
+    }
+
+    /* ---- Navigation ---- */
+    .nav-dots {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .nav-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      border: 2px solid rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+    }
+    .nav-dot:hover, .nav-dot.active {
+      background: #F5C842;
+      border-color: #F5C842;
+      transform: scale(1.3);
+    }
+
+    /* ---- Cover ---- */
+    .cover {
+      height: 100vh;
+      background: linear-gradient(160deg, #6B1A00 0%, #C04A0A 35%, #E8893A 65%, #F5C842 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(255,200,100,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(180,60,0,0.2) 0%, transparent 60%);
+    }
+    .cover-maple {
+      font-size: 90px;
+      animation: floatY 4s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.3));
+    }
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+    .cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: #fff;
+      text-shadow: 2px 6px 16px rgba(0,0,0,0.35);
+      margin: 18px 0 10px;
+      position: relative;
+      z-index: 1;
+      font-style: italic;
+      letter-spacing: 2px;
+    }
+    .cover-en {
+      font-size: clamp(0.9rem, 2vw, 1.2rem);
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 28px;
+    }
+    .cover-dates {
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 3px;
+      background: rgba(0,0,0,0.22);
+      padding: 10px 36px;
+      border-radius: 40px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      position: relative;
+      z-index: 1;
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.65);
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-align: center;
+      animation: bounce 2.5s ease-in-out infinite;
+    }
+    .scroll-hint::after {
+      content: '▼';
+      display: block;
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.65; }
+      50% { transform: translateX(-50%) translateY(9px); opacity: 1; }
+    }
+
+    /* ---- Day Sections ---- */
+    .day-section {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 60px 20px 80px;
+    }
+    .day-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    .day-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(15,8,2,0.62) 0%,
+        rgba(15,8,2,0.38) 45%,
+        rgba(15,8,2,0.68) 100%
+      );
+    }
+    .day-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Day Header */
+    .day-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .day-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #C04A0A, #E8893A);
+      color: #fff;
+      font-size: 0.78rem;
+      letter-spacing: 4px;
+      padding: 5px 22px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 12px rgba(192,74,10,0.4);
+    }
+    .day-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: #fff;
+      text-shadow: 2px 4px 16px rgba(0,0,0,0.55);
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .day-date {
+      font-size: 0.9rem;
+      color: rgba(255,220,170,0.88);
+      letter-spacing: 2px;
+    }
+
+    /* Schedule */
+    .schedule { display: flex; flex-direction: column; gap: 11px; }
+
+    .schedule-item {
+      display: flex;
+      align-items: flex-start;
+      background: rgba(255, 248, 235, 0.93);
+      border-radius: 16px;
+      padding: 14px 18px;
+      backdrop-filter: blur(12px);
+      border-left: 4px solid #C04A0A;
+      box-shadow: 0 3px 18px rgba(0,0,0,0.18);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .schedule-item:hover {
+      transform: translateX(7px);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.25);
+    }
+    .schedule-item.highlight {
+      border-left-color: #F5C842;
+      background: rgba(255, 252, 230, 0.95);
+    }
+
+    .schedule-time {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #C04A0A;
+      min-width: 52px;
+      padding-top: 3px;
+      flex-shrink: 0;
+    }
+    .schedule-divider {
+      width: 1px;
+      background: linear-gradient(to bottom, #C04A0A, transparent);
+      margin: 4px 14px 0;
+      min-height: 18px;
+      opacity: 0.25;
+      flex-shrink: 0;
+    }
+    .schedule-body { flex: 1; }
+
+    .place-link {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #3D2B1F;
+      text-decoration: none;
+      border-bottom: 1.5px dashed #C04A0A;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .place-link:hover {
+      color: #C04A0A;
+      border-color: #C04A0A;
+    }
+    .plain-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #3D2B1F;
+    }
+
+    .note {
+      font-size: 0.82rem;
+      color: #7A5C45;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    .note a {
+      color: #C04A0A;
+      text-decoration: none;
+      border-bottom: 1px dotted #C04A0A;
+    }
+    .reserved {
+      display: inline-block;
+      background: #F5C842;
+      color: #5C3A00;
+      font-size: 0.68rem;
+      padding: 2px 9px;
+      border-radius: 10px;
+      margin-left: 7px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    /* Closing message */
+    .closing {
+      text-align: center;
+      margin-top: 64px;
+      color: rgba(255,240,200,0.9);
+    }
+    .closing-maple { font-size: 3.5rem; margin-bottom: 14px; }
+    .closing-msg {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-style: italic;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+    .closing-en {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      letter-spacing: 2px;
+    }
+
+    /* Footer */
+    footer {
+      background: #1a0e06;
+      color: rgba(255,190,120,0.6);
+      text-align: center;
+      padding: 36px 20px;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .nav-dots { right: 10px; }
+      .day-section { padding: 50px 14px 60px; }
+      .schedule-item { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation dots -->
+<nav class="nav-dots" aria-label="ページナビ">
+  <a href="#cover"  class="nav-dot" title="表紙"></a>
+  <a href="#day1"   class="nav-dot" title="8/15 カルガリー"></a>
+  <a href="#day2"   class="nav-dot" title="8/16 バンフ"></a>
+  <a href="#day3"   class="nav-dot" title="8/17 ジャスパー"></a>
+  <a href="#day4"   class="nav-dot" title="8/18 エドモントン"></a>
+  <a href="#day5"   class="nav-dot" title="8/19 トロント"></a>
+  <a href="#day6"   class="nav-dot" title="8/20 ナイアガラ→トロント"></a>
+  <a href="#day7"   class="nav-dot" title="8/21 トロント"></a>
+</nav>
+
+<!-- ===================== COVER ===================== -->
+<section id="cover" class="cover">
+  <div class="cover-maple">🍁</div>
+  <h1 class="cover-title">カナダ旅のしおり</h1>
+  <p class="cover-en">Canada Travel 2025</p>
+  <p class="cover-dates">2025年 8月15日（土）〜 8月21日（金）</p>
+  <div class="scroll-hint">スクロール</div>
+</section>
+
+<!-- ===================== DAY 1 ===================== -->
+<section id="day1" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 1</div>
+      <h2 class="day-title">カルガリー観光</h2>
+      <p class="day-date">2025年 8月15日（土）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item">
+        <span class="schedule-time">12:40</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Calgary+International+Airport" target="_blank">✈️ カルガリー国際空港 着</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">13:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 カルガリー空港 発</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">14:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=car+rental+Calgary+airport" target="_blank">🚙 レンタカー借りる</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">14:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Greedy+Donut+Calgary" target="_blank">🍩 Greedy Donut</a>
+          <p class="note">カルガリー名物ドーナツ</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">15:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🏨 ホテル着・チェックイン</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">15:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Stephen+Avenue+Walk+Calgary" target="_blank">🚃 ステファンアベニュー</a>
+          <p class="note">電車でお散歩</p>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">18:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Caesar%27s+Steak+House+Lounge+Calgary" target="_blank">🥩 Caesar's Steak House &amp; Lounge</a>
+          <p class="note">ステーキ　ディナー</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 2 ===================== -->
+<section id="day2" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 2</div>
+      <h2 class="day-title">バンフ観光</h2>
+      <p class="day-date">2025年 8月16日（日）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item">
+        <span class="schedule-time">3:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">⏰ 起床</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">4:15</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 カルガリー出発</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">6:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Lake+Louise+Ski+Resort+Parking" target="_blank">🅿️ Lake Louise Ski Resort 駐車場</a>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">①</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Lake+Louise+Alberta+Canada" target="_blank">🛶 ルイーズ湖　カヤック</a>
+          <p class="note">エメラルドグリーンの湖でカヤック体験</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">②</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Peyto+Lake+Alberta+Canada" target="_blank">🏔️ ペイトー湖</a>
+          <p class="note">オオカミの形をした絶景の湖</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">③</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Bow+Lake+Alberta+Canada" target="_blank">💧 ボウ湖</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">④</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Johnston+Canyon+Alberta+Canada" target="_blank">🥾 ジョンストン渓谷</a>
+          <p class="note">ハイキング 2〜3時間</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">14:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Banff+Avenue+Alberta+Canada" target="_blank">🛍️ バンフアベニュー　市内観光</a>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">15:50</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Banff+Gondola+Alberta" target="_blank">🚡 ゴンドラ</a>
+          <span class="reserved">予約済み</span>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">17:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Sky+Bistro+Banff+Alberta" target="_blank">🍽️ スカイビストロ</a>
+          <span class="reserved">予約済み</span>
+          <p class="note">山頂レストランで絶景ディナー！</p>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">18:50</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Banff+Gondola+Alberta" target="_blank">🚡 ゴンドラ 下山</a>
+          <span class="reserved">予約済み</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">20:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🏙️ カルガリー着</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">夜</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Canadian+Superstore+Calgary+6th+Ave" target="_blank">🛒 Canadian Superstore Calgary 6th Ave</a>
+          <p class="note">お買い物</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 3 ===================== -->
+<section id="day3" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1547989453-e2073e49a0b7?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 3</div>
+      <h2 class="day-title">ジャスパー観光</h2>
+      <p class="day-date">2025年 8月17日（月）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item">
+        <span class="schedule-time">6:15</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 カルガリーホテル 発</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">10:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Columbia+Icefield+Discovery+Centre" target="_blank">🧊 コロンビアアイスフィールドディスカバリーセンター</a>
+          <p class="note">着</p>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">10:45</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Columbia+Icefield+Athabasca+Glacier+Tour" target="_blank">❄️ コロンビア大氷原ツアー</a>
+          <span class="reserved">予約済み</span>
+          <p class="note">氷河の上を歩く幻想的な体験！</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">15:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Athabasca+Falls+Jasper+Alberta" target="_blank">💦 アサバスカ滝</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">16:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 アサバスカ滝 発</span>
+          <p class="note">時間があれば → <a href="https://www.google.com/maps/search/?api=1&query=Maligne+Canyon+Jasper+Alberta" target="_blank">マリーン渓谷</a></p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">20:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Real+Canadian+Superstore+Stony+Plain+Road+Edmonton" target="_blank">🛒 Real Canadian Superstore</a>
+          <p class="note">Stony Plain Road　お買い物</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">21:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🏨 エドモントンホテル着</span>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">夜</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Elk+Island+National+Park+Alberta" target="_blank">🌌 エルクアイランド国立公園</a>
+          <p class="note">オーロラ観測・バイソン探し</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 4 ===================== -->
+<section id="day4" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1568097083843-3e8dc0f5de4a?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 4</div>
+      <h2 class="day-title">エドモントン → カルガリー</h2>
+      <p class="day-date">2025年 8月18日（火）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item">
+        <span class="schedule-time">8:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Rockin+Robyn%27s+Edmonton" target="_blank">🍳 Rockin' Robyn's</a>
+          <p class="note">朝ごはん　ホテルから徒歩</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">10:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Elk+Island+National+Park+Alberta" target="_blank">🦌 エルクアイランド国立公園</a>
+          <p class="note">バイソン・野生動物観察</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">11:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=West+Edmonton+Mall+Alberta" target="_blank">🛍️ ウェストエドモントンモール</a>
+          <p class="note">昼食・ショッピング（ホワイトアベニュー）</p>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">15:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Duchess+Bake+Shop+Edmonton" target="_blank">🧁 Duchess Bake Shop</a>
+          <p class="note">マカロンをお土産に！</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">15:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 エドモントン 発 → カルガリーへ</span>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">19:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Rodney%27s+Oyster+House+Calgary" target="_blank">🦪 Rodney's Oyster House Calgary</a>
+          <p class="note">カルガリーディナー</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">夜</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 レンタカー返却</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 5 ===================== -->
+<section id="day5" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1489447068241-b3490214e879?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 5</div>
+      <h2 class="day-title">カルガリー → ナイアガラ</h2>
+      <p class="day-date">2025年 8月19日（水）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item">
+        <span class="schedule-time">4:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">⏰ 起床</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">4:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 出発</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">5:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Calgary+International+Airport" target="_blank">✈️ カルガリー空港 着</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">7:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">✈️ カルガリー空港 発 → トロントへ</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">13:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Toronto+Pearson+International+Airport+Terminal+3" target="_blank">✈️ トロント空港 着（ターミナル3）</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">14:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Toronto+Pearson+International+Airport+Terminal+1" target="_blank">🚙 ターミナル1　レンタカー借りる</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">15:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🏨 ホテル着（ラマダ バイ ウィンダム）</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">16:30</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Niagara+Falls+Ontario+Canada" target="_blank">💦 ナイアガラの滝ツアー</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">17:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Niagara+Falls+Ontario" target="_blank">🚶 周辺ぶらぶら散策</a>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">19:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Prime+Steakhouse+Niagara+Falls+Ontario" target="_blank">🥩 Prime Steakhouse Niagara Falls</a>
+          <p class="note">ディナー</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">夜食</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Smoke%27s+Poutinerie+Niagara+Falls" target="_blank">🍟 Smokes Poutine</a>
+          <p class="note">カナダ名物プーティン！</p>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">22:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Niagara+Falls+Fireworks+Ontario" target="_blank">🎆 花火</a>
+          <p class="note">ナイアガラの滝と花火！</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 6 ===================== -->
+<section id="day6" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 6</div>
+      <h2 class="day-title">ナイアガラ → トロント</h2>
+      <p class="day-date">2025年 8月20日（木）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item">
+        <span class="schedule-time">7:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">☀️ 起床</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">8:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Tim+Hortons+Niagara+Falls" target="_blank">☕ Tim Hortons</a>
+          <p class="note">朝ごはん → 朝のナイアガラの滝へ</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">9:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <span class="plain-text">🚗 ナイアガラ 発 → トロントへ</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">10:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Tim+Hortons+Toronto" target="_blank">☕ Tim Hortons 着</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">11:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Casa+Loma+Toronto+Ontario" target="_blank">🏰 カーサローマ</a>
+          <p class="note">幻想的なお城を見学</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">12:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Siempre+Breakfast+Lunch+Toronto" target="_blank">🍽️ Siempre Breakfast &amp; Lunch</a>
+          <p class="note">昼ごはん</p>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">午後</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=St+Lawrence+Market+Toronto" target="_blank">🥕 セントローレンスマーケット</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">午後</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Distillery+District+Toronto+Ontario" target="_blank">🍺 ディスティラリー地区</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">午後</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Harbourfront+Centre+Toronto" target="_blank">⛵ ハーバーフロント</a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <span class="schedule-time">午後</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Toronto+Eaton+Centre" target="_blank">🛍️ トロントイートンショッピングセンター</a>
+          <p class="note"><a href="https://www.google.com/maps/search/?api=1&query=Tim+Hortons+Toronto+Eaton+Centre" target="_blank">Tim Hortons</a> でお土産も！</p>
+        </div>
+      </div>
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">18:00</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Gusto+101+Toronto+Ontario" target="_blank">🍕 Gusto 101</a>
+          <p class="note">フォカッチャ・ティラミス　絶品イタリアン！</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DAY 7 ===================== -->
+<section id="day7" class="day-section">
+  <div class="day-bg" style="background-image: url('https://images.unsplash.com/photo-1503551723145-6c040742065b?w=1920&q=80');"></div>
+  <div class="day-content">
+    <div class="day-header">
+      <div class="day-badge">Day 7</div>
+      <h2 class="day-title">トロント 自由行動</h2>
+      <p class="day-date">2025年 8月21日（金）</p>
+    </div>
+    <div class="schedule">
+
+      <div class="schedule-item highlight">
+        <span class="schedule-time">🍁</span>
+        <div class="schedule-divider"></div>
+        <div class="schedule-body">
+          <a class="place-link" href="https://www.google.com/maps/search/?api=1&query=Toronto+Ontario+Canada" target="_blank">トロントをのんびり満喫</a>
+          <p class="note">旅の最終日　大切な思い出を！</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="closing">
+      <div class="closing-maple">🍁</div>
+      <p class="closing-msg">良い旅を！</p>
+      <p class="closing-en">Have a wonderful trip to Canada!</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🍁 カナダ旅のしおり　2025年 8月15日（土）〜 8月21日（金）</p>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const dots = document.querySelectorAll('.nav-dot');
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        dots.forEach(d => d.classList.remove('active'));
+        const idx = Array.from(sections).indexOf(e.target);
+        if (dots[idx]) dots[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>
