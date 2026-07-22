@@ -778,6 +778,34 @@ body {
   border: 1px solid #fcd34d;
 }
 
+/* Stock info board */
+.info-board {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info-board-header h2 {
+  font-size: 18px;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 /* API key setup */
 .api-key-setup {
   background: var(--surface);

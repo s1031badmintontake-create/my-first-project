@@ -53,21 +53,36 @@ JSON配列のみを返してください（説明文は不要）。
   };
 
   const getStockInfo = async (ticker: string, name: string) => {
+    const today = new Date().toISOString().slice(0, 10);
     const text = await callClaude({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
+      max_tokens: 1536,
       messages: [{
         role: 'user',
-        content: `${ticker}（${name}）について日本語で教えてください。
-JSONのみ返してください（余計なテキスト不要）:
-{"overview":"会社概要2文","ceoName":"CEO名","ceoComment":"CEOの最近のコメント・経営方針（2〜3文）","news":["ニュース1","ニュース2","ニュース3"],"earningsDate":"次回決算予定（例：2025年8月中旬）"}`,
+        content: `${ticker}（${name}）について、日本語で回答してください。本日は${today}です。半年（6ヶ月）より古い情報は含めないでください。Xの公式アカウントなどSNS上の発信も情報源として参考にして構いません。
+
+以下の項目の順番を厳守してJSONのみ返してください（説明文は不要）:
+1. 社長(CEO)コメント（最近の発言・経営方針。情報がなければ null）
+2. 株価・決算・次回決算日・PER・RSI
+3. トピック
+4. 関連する銘柄
+5. 1〜4の内容を踏まえた、株価の購入タイミングについての考察
+
+{"ceoComment":"CEOの最近のコメント（なければnull）","stockPrice":"直近の株価水準の説明","earnings":"直近決算の概要","nextEarningsDate":"次回決算予定日","per":"PERの値と評価","rsi":"RSIの値と評価","topics":["トピック1","トピック2"],"relatedStocks":["関連銘柄1","関連銘柄2"],"buyTimingAnalysis":"購入タイミングについての考察"}`,
       }],
     });
     const match = text.match(/\{[\s\S]*\}/);
     if (!match) throw new Error('JSON not found');
     return JSON.parse(match[0]) as {
-      overview: string; ceoName: string; ceoComment: string;
-      news: string[]; earningsDate: string;
+      ceoComment: string | null;
+      stockPrice: string;
+      earnings: string;
+      nextEarningsDate: string;
+      per: string;
+      rsi: string;
+      topics: string[];
+      relatedStocks: string[];
+      buyTimingAnalysis: string;
     };
   };
 
