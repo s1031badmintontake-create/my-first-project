@@ -1,4 +1,4 @@
-import type { Stock, PortfolioSummary } from './types';
+import type { Stock } from './types';
 
 export function calcGain(stock: Stock) {
   const cost = stock.purchasePrice * stock.quantity;
@@ -10,18 +10,6 @@ export function calcGain(stock: Stock) {
 
 export function toJpy(amount: number, currency: 'JPY' | 'USD', usdJpy: number): number {
   return currency === 'USD' ? amount * usdJpy : amount;
-}
-
-export function calcPortfolioSummary(stocks: Stock[], usdJpy: number): PortfolioSummary {
-  const totalCost = stocks.reduce(
-    (s, st) => s + toJpy(st.purchasePrice * st.quantity, st.currency, usdJpy), 0
-  );
-  const totalValue = stocks.reduce(
-    (s, st) => s + toJpy(st.currentPrice * st.quantity, st.currency, usdJpy), 0
-  );
-  const totalGain = totalValue - totalCost;
-  const totalGainPercent = totalCost > 0 ? (totalGain / totalCost) * 100 : 0;
-  return { totalCost, totalValue, totalGain, totalGainPercent };
 }
 
 export function formatJpy(value: number): string {
