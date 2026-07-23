@@ -19,7 +19,11 @@ export function useClaudeApi() {
       throw new Error(err?.error?.message ?? `API error ${res.status}`);
     }
     const data = await res.json();
-    return data.content[0].text as string;
+    const textBlock = (data.content as Array<{ type: string; text?: string }>).find(
+      (b) => b.type === 'text'
+    );
+    if (!textBlock?.text) throw new Error('応答にテキストが含まれていません');
+    return textBlock.text;
   };
 
   const parseScreenshot = async (base64: string, mediaType: string) => {
