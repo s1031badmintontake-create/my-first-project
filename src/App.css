@@ -586,6 +586,17 @@ body {
   color: var(--text-muted);
 }
 
+.detail-price {
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.tradingview-widget-container {
+  margin: 4px 0 4px;
+  min-height: 220px;
+}
+
 .detail-summary {
   display: grid;
   grid-template-columns: 1fr 1fr;

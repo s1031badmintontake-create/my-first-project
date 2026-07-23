@@ -30,6 +30,7 @@ export function useClaudeApi() {
     const text = await callClaude({
       model: 'claude-sonnet-5',
       max_tokens: 4096,
+      thinking: { type: 'disabled' },
       messages: [{
         role: 'user',
         content: [
@@ -61,18 +62,18 @@ JSON配列のみを返してください（説明文は不要）。
     const text = await callClaude({
       model: 'claude-sonnet-5',
       max_tokens: 3072,
+      thinking: { type: 'disabled' },
       messages: [{
         role: 'user',
         content: `${ticker}（${name}）について、日本語で回答してください。本日は${today}です。半年（6ヶ月）より古い情報は含めないでください。Xの公式アカウントなどSNS上の発信も情報源として参考にして構いません。
 
 以下の項目の順番を厳守してJSONのみ返してください（説明文は不要）:
 1. 社長(CEO)コメント（最近の発言・経営方針。情報がなければ null）
-2. 株価・決算・次回決算日・PER・RSI
-3. トピック
+2. 株価・決算・次回決算日・PER・RSI（stockPrice/per/rsiは必ず具体的な数値または水準の目安を含める。空欄にしない）
+3. トピック（直近の話題を具体的に2〜3件。空配列にしない）
 4. 関連する銘柄
-5. 1〜4の内容を踏まえた、株価の購入タイミングについての考察
 
-{"ceoComment":"CEOの最近のコメント（なければnull）","stockPrice":"直近の株価水準の説明","earnings":"直近決算の概要","nextEarningsDate":"次回決算予定日","per":"PERの値と評価","rsi":"RSIの値と評価","topics":["トピック1","トピック2"],"relatedStocks":["関連銘柄1","関連銘柄2"],"buyTimingAnalysis":"購入タイミングについての考察"}`,
+{"ceoComment":"CEOの最近のコメント（なければnull）","stockPrice":"直近の株価水準（具体的な価格帯や変動の説明）","earnings":"直近決算の概要","nextEarningsDate":"次回決算予定日","per":"PERの値と評価","rsi":"RSIの値と評価","topics":["トピック1","トピック2"],"relatedStocks":["関連銘柄1","関連銘柄2"]}`,
       }],
     });
     const match = text.match(/\{[\s\S]*\}/);
@@ -86,7 +87,6 @@ JSON配列のみを返してください（説明文は不要）。
       rsi: string;
       topics: string[];
       relatedStocks: string[];
-      buyTimingAnalysis: string;
     };
   };
 
