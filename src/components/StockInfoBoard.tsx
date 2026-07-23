@@ -22,21 +22,19 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo }: Prop
   const [pending, setPending] = useState<Record<string, 'loading' | 'error'>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const fetchAll = async () => {
-    for (const stock of stocks) {
-      setPending((p) => ({ ...p, [stock.id]: 'loading' }));
-      try {
-        const info = await getStockInfo(stock.ticker, stock.name);
-        setCache((c) => ({ ...c, [stock.id]: info }));
-        setPending((p) => {
-          const next = { ...p };
-          delete next[stock.id];
-          return next;
-        });
-      } catch (err) {
-        setPending((p) => ({ ...p, [stock.id]: 'error' }));
-        setErrors((e) => ({ ...e, [stock.id]: err instanceof Error ? err.message : '取得に失敗しました' }));
-      }
+  const fetchOne = async (stock: Stock) => {
+    setPending((p) => ({ ...p, [stock.id]: 'loading' }));
+    try {
+      const info = await getStockInfo(stock.ticker, stock.name);
+      setCache((c) => ({ ...c, [stock.id]: info }));
+      setPending((p) => {
+        const next = { ...p };
+        delete next[stock.id];
+        return next;
+      });
+    } catch (err) {
+      setPending((p) => ({ ...p, [stock.id]: 'error' }));
+      setErrors((e) => ({ ...e, [stock.id]: err instanceof Error ? err.message : '取得に失敗しました' }));
     }
   };
 
@@ -48,11 +46,6 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo }: Prop
     <div className="info-board">
       <div className="info-board-header">
         <h2>銘柄情報一覧</h2>
-        {hasApiKey && (
-          <button className="btn btn-secondary btn-sm" onClick={fetchAll}>
-            <RefreshCw size={14} /> AI情報を取得
-          </button>
-        )}
       </div>
 
       {!hasApiKey && (
@@ -71,6 +64,16 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo }: Prop
               <span className={`badge badge-${stock.currency.toLowerCase()}`}>{stock.currency}</span>
               <span className="detail-name">{stock.name}</span>
               <span className="detail-price">{formatCurrency(stock.currentPrice, stock.currency)}</span>
+              {hasApiKey && (
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => fetchOne(stock)}
+                  disabled={status === 'loading'}
+                >
+                  <RefreshCw size={14} className={status === 'loading' ? 'spinning' : ''} />
+                  {info ? '更新' : '取得'}
+                </button>
+              )}
             </div>
 
             <StockChart ticker={stock.ticker} currency={stock.currency} />
@@ -105,7 +108,7 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo }: Prop
             )}
 
             {!info && !status && hasApiKey && (
-              <p className="table-hint">「AI情報を取得」を押すとCEOコメントなどが表示されます</p>
+              <p className="table-hint">「取得」を押すとCEOコメントなどが表示されます</p>
             )}
           </div>
         );
