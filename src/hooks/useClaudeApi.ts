@@ -61,24 +61,28 @@ JSON配列のみを返してください（説明文は不要）。
     const today = new Date().toISOString().slice(0, 10);
     const text = await callClaude({
       model: 'claude-sonnet-5',
-      max_tokens: 4096,
+      max_tokens: 8192,
       thinking: { type: 'disabled' },
-      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 4 }],
+      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }],
       messages: [{
         role: 'user',
-        content: `${ticker}（${name}）について、Web検索ツールを使って実際に検索し、最新情報を調べたうえで日本語で回答してください。本日は${today}です。できるだけ直近6ヶ月以内の情報を優先してください（検索しても見つからない項目は、その旨がわかる内容で構いません）。Xの公式アカウントなどSNS上の発信も情報源として参考にして構いません。
+        content: `${ticker}（${name}）について、Web検索ツールを使って実際に検索してください。本日は${today}です。過去1ヶ月以内（${today}の1ヶ月前以降）の情報のみを対象にしてください。それより古い情報しか見つからない場合は該当項目を空にしてください。
 
-検索・調査が終わったら、最後に以下の項目の順番を厳守してJSONのみを1つ返してください（それ以外の説明文は不要）:
-1. 社長(CEO)コメント（最近の発言・経営方針。情報がなければ null）
-2. トピック（直近の話題を具体的に2〜3件。空配列にしない）
-3. 関連する銘柄
+検索が終わったら、検索結果の要約・説明・前置きなどの文章は一切書かず、次のJSONオブジェクト1つだけを出力してください。JSON以外の文字は絶対に出力しないでください。
 
-{"ceoComment":"CEOの最近のコメント（なければnull）","topics":["トピック1","トピック2"],"relatedStocks":["関連銘柄1","関連銘柄2"]}`,
+- ceoComment: 過去1ヶ月以内のCEO・社長の発言や経営方針コメント。見つからなければ null
+- topics: 過去1ヶ月以内の具体的なトピックを2〜3件。見つからなければ空配列
+- relatedStocks: 関連する銘柄のティッカーを2〜3件
+
+出力形式:
+{"ceoComment":"...","topics":["...","..."],"relatedStocks":["...","..."]}`,
       }],
     });
     const start = text.lastIndexOf('{');
     const end = text.lastIndexOf('}');
-    if (start === -1 || end === -1 || end < start) throw new Error('JSON not found');
+    if (start === -1 || end === -1 || end < start) {
+      throw new Error('AIの回答からJSONを取得できませんでした。もう一度お試しください');
+    }
     return JSON.parse(text.slice(start, end + 1)) as {
       ceoComment: string | null;
       topics: string[];
