@@ -69,22 +69,16 @@ JSON配列のみを返してください（説明文は不要）。
 
 以下の項目の順番を厳守してJSONのみ返してください（説明文は不要）:
 1. 社長(CEO)コメント（最近の発言・経営方針。情報がなければ null）
-2. 株価・決算・次回決算日・PER・RSI（stockPrice/per/rsiは必ず具体的な数値または水準の目安を含める。空欄にしない）
-3. トピック（直近の話題を具体的に2〜3件。空配列にしない）
-4. 関連する銘柄
+2. トピック（直近の話題を具体的に2〜3件。空配列にしない）
+3. 関連する銘柄
 
-{"ceoComment":"CEOの最近のコメント（なければnull）","stockPrice":"直近の株価水準（具体的な価格帯や変動の説明）","earnings":"直近決算の概要","nextEarningsDate":"次回決算予定日","per":"PERの値と評価","rsi":"RSIの値と評価","topics":["トピック1","トピック2"],"relatedStocks":["関連銘柄1","関連銘柄2"]}`,
+{"ceoComment":"CEOの最近のコメント（なければnull）","topics":["トピック1","トピック2"],"relatedStocks":["関連銘柄1","関連銘柄2"]}`,
       }],
     });
     const match = text.match(/\{[\s\S]*\}/);
     if (!match) throw new Error('JSON not found');
     return JSON.parse(match[0]) as {
       ceoComment: string | null;
-      stockPrice: string;
-      earnings: string;
-      nextEarningsDate: string;
-      per: string;
-      rsi: string;
       topics: string[];
       relatedStocks: string[];
     };
