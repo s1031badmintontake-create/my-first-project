@@ -25,7 +25,7 @@ export default function App() {
   const [stocks, setStocks] = useLocalStorage<Stock[]>('stocks', INITIAL_STOCKS);
   const [view, setView] = useState<View>('info');
   const [editTarget, setEditTarget] = useState<Stock | null>(null);
-  const { apiKey, setApiKey, getStockInfo, getCompetitiveAnalysis } = useClaudeApi();
+  const { apiKey, setApiKey, getStockInfo, getSectorComparison } = useClaudeApi();
 
   const handleSave = (stock: Stock) => {
     setStocks((prev) =>
@@ -78,7 +78,7 @@ export default function App() {
           <CompetitiveAnalysisBoard
             stocks={stocks}
             hasApiKey={!!apiKey}
-            getCompetitiveAnalysis={getCompetitiveAnalysis}
+            getSectorComparison={getSectorComparison}
           />
         )}
         {view === 'settings' && (

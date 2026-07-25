@@ -470,6 +470,59 @@ body {
   color: #92400e;
 }
 
+.badge-held {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Sector add row */
+.sector-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.sector-add-row input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.sector-add-row input:focus {
+  border-color: var(--primary);
+}
+
+/* Company comparison list */
+.company-compare-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.company-compare-item {
+  border-left: 2px solid var(--border);
+  padding-left: 10px;
+}
+
+.company-compare-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+
+.company-compare-name {
+  font-weight: 700;
+}
+
+.company-compare-ticker {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 /* JPY sub-text under USD prices */
 .jpy-sub {
   font-size: 11px;
