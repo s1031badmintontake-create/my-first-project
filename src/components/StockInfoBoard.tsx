@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { RefreshCw, TrendingUp, Newspaper, Link2 } from 'lucide-react';
+import { RefreshCw, TrendingUp, Newspaper, Link2, Pencil } from 'lucide-react';
 import type { Stock } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { formatCurrency } from '../utils';
@@ -15,9 +15,10 @@ interface Props {
   stocks: Stock[];
   hasApiKey: boolean;
   getStockInfo: (ticker: string, name: string) => Promise<StockInfo>;
+  onEdit: (stock: Stock) => void;
 }
 
-export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo }: Props) {
+export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo, onEdit }: Props) {
   const [cache, setCache] = useLocalStorage<Record<string, StockInfo>>('stockInfoCache', {});
   const [pending, setPending] = useState<Record<string, 'loading' | 'error'>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -64,6 +65,9 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo }: Prop
               <span className={`badge badge-${stock.currency.toLowerCase()}`}>{stock.currency}</span>
               <span className="detail-name">{stock.name}</span>
               <span className="detail-price">{formatCurrency(stock.currentPrice, stock.currency)}</span>
+              <button className="icon-btn" title="編集" onClick={() => onEdit(stock)}>
+                <Pencil size={16} />
+              </button>
               {hasApiKey && (
                 <button
                   className="btn btn-secondary btn-sm"
