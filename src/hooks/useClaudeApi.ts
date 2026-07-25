@@ -26,6 +26,15 @@ export function useClaudeApi() {
     return textBlocks.map((b) => b.text).join('\n');
   };
 
+  const extractTrailingJson = (text: string) => {
+    const start = text.lastIndexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start === -1 || end === -1 || end < start) {
+      throw new Error('AIの回答からJSONを取得できませんでした。もう一度お試しください');
+    }
+    return JSON.parse(text.slice(start, end + 1));
+  };
+
   const parseScreenshot = async (base64: string, mediaType: string) => {
     const text = await callClaude({
       model: 'claude-sonnet-5',
@@ -78,17 +87,40 @@ JSON配列のみを返してください（説明文は不要）。
 {"ceoComment":"...","topics":["...","..."],"relatedStocks":["...","..."]}`,
       }],
     });
-    const start = text.lastIndexOf('{');
-    const end = text.lastIndexOf('}');
-    if (start === -1 || end === -1 || end < start) {
-      throw new Error('AIの回答からJSONを取得できませんでした。もう一度お試しください');
-    }
-    return JSON.parse(text.slice(start, end + 1)) as {
+    return extractTrailingJson(text) as {
       ceoComment: string | null;
       topics: string[];
       relatedStocks: string[];
     };
   };
 
-  return { apiKey, setApiKey, parseScreenshot, getStockInfo };
+  const getCompetitiveAnalysis = async (ticker: string, name: string) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const text = await callClaude({
+      model: 'claude-sonnet-5',
+      max_tokens: 8192,
+      thinking: { type: 'disabled' },
+      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }],
+      messages: [{
+        role: 'user',
+        content: `${ticker}（${name}）が属する業界・分野について、Web検索ツールを使って実際に検索してください。本日は${today}です。銘柄を1つに絞った比較ではなく、その分野全体の状況を踏まえて回答してください。
+
+検索が終わったら、検索結果の要約・説明・前置きなどの文章は一切書かず、次のJSONオブジェクト1つだけを出力してください。JSON以外の文字は絶対に出力しないでください。
+
+- field: ${ticker}が属する分野・業界名
+- overview: その分野全体の概況（主なプレイヤーや市場動向など。2〜3文）
+- position: ${name}のその分野内での相対的な立ち位置（強み・弱みを含めて2〜3文）
+
+出力形式:
+{"field":"...","overview":"...","position":"..."}`,
+      }],
+    });
+    return extractTrailingJson(text) as {
+      field: string;
+      overview: string;
+      position: string;
+    };
+  };
+
+  return { apiKey, setApiKey, parseScreenshot, getStockInfo, getCompetitiveAnalysis };
 }

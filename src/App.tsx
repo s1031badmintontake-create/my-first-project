@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { PlusCircle, Info, Settings } from 'lucide-react';
+import { PlusCircle, Info, Settings, Swords } from 'lucide-react';
 import type { Stock } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useClaudeApi } from './hooks/useClaudeApi';
 import StockForm from './components/StockForm';
 import StockInfoBoard from './components/StockInfoBoard';
+import CompetitiveAnalysisBoard from './components/CompetitiveAnalysisBoard';
 import ApiKeySetup from './components/ApiKeySetup';
 import './App.css';
 
@@ -18,13 +19,13 @@ const INITIAL_STOCKS: Stock[] = [
   { id: '7', ticker: 'SOFI',  name: 'ソーファイ テクノロジーズ',      quantity: 5,  purchasePrice: 22.50,  currentPrice: 17.88,  purchaseDate: '2024-01-01', currency: 'USD' },
 ];
 
-type View = 'add' | 'edit' | 'info' | 'settings';
+type View = 'add' | 'edit' | 'info' | 'competitive' | 'settings';
 
 export default function App() {
   const [stocks, setStocks] = useLocalStorage<Stock[]>('stocks', INITIAL_STOCKS);
   const [view, setView] = useState<View>('info');
   const [editTarget, setEditTarget] = useState<Stock | null>(null);
-  const { apiKey, setApiKey, getStockInfo } = useClaudeApi();
+  const { apiKey, setApiKey, getStockInfo, getCompetitiveAnalysis } = useClaudeApi();
 
   const handleSave = (stock: Stock) => {
     setStocks((prev) =>
@@ -49,6 +50,9 @@ export default function App() {
           <button className={`nav-btn ${view === 'info' ? 'active' : ''}`} onClick={nav('info')}>
             <Info size={15} /> 銘柄情報
           </button>
+          <button className={`nav-btn ${view === 'competitive' ? 'active' : ''}`} onClick={nav('competitive')}>
+            <Swords size={15} /> 競合分析
+          </button>
           <button className="nav-btn btn-add" onClick={nav('add')}>
             <PlusCircle size={15} /> 銘柄を追加
           </button>
@@ -68,6 +72,13 @@ export default function App() {
             hasApiKey={!!apiKey}
             getStockInfo={getStockInfo}
             onEdit={handleEdit}
+          />
+        )}
+        {view === 'competitive' && (
+          <CompetitiveAnalysisBoard
+            stocks={stocks}
+            hasApiKey={!!apiKey}
+            getCompetitiveAnalysis={getCompetitiveAnalysis}
           />
         )}
         {view === 'settings' && (
