@@ -597,6 +597,20 @@ body {
   min-height: 220px;
 }
 
+.tradingview-open-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--primary);
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.tradingview-open-link:hover {
+  text-decoration: underline;
+}
+
 .detail-summary {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -1,4 +1,5 @@
 import { useEffect, useRef, memo } from 'react';
+import { ExternalLink } from 'lucide-react';
 
 interface Props {
   ticker: string;
@@ -7,12 +8,11 @@ interface Props {
 
 function StockChart({ ticker, currency }: Props) {
   const container = useRef<HTMLDivElement>(null);
+  const symbol = currency === 'JPY' ? `TSE:${ticker}` : ticker;
 
   useEffect(() => {
     if (!container.current) return;
     container.current.innerHTML = '';
-
-    const symbol = currency === 'JPY' ? `TSE:${ticker}` : ticker;
 
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
@@ -32,8 +32,18 @@ function StockChart({ ticker, currency }: Props) {
   }, [ticker, currency]);
 
   return (
-    <div className="tradingview-widget-container" ref={container}>
-      <div className="tradingview-widget-container__widget" />
+    <div>
+      <div className="tradingview-widget-container" ref={container}>
+        <div className="tradingview-widget-container__widget" />
+      </div>
+      <a
+        className="tradingview-open-link"
+        href={`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(symbol)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <ExternalLink size={13} /> TradingViewで開く
+      </a>
     </div>
   );
 }

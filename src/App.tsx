@@ -18,19 +18,28 @@ const INITIAL_STOCKS: Stock[] = [
   { id: '7', ticker: 'SOFI',  name: 'ソーファイ テクノロジーズ',      quantity: 5,  purchasePrice: 22.50,  currentPrice: 17.88,  purchaseDate: '2024-01-01', currency: 'USD' },
 ];
 
-type View = 'add' | 'info' | 'settings';
+type View = 'add' | 'edit' | 'info' | 'settings';
 
 export default function App() {
   const [stocks, setStocks] = useLocalStorage<Stock[]>('stocks', INITIAL_STOCKS);
   const [view, setView] = useState<View>('info');
+  const [editTarget, setEditTarget] = useState<Stock | null>(null);
   const { apiKey, setApiKey, getStockInfo } = useClaudeApi();
 
   const handleSave = (stock: Stock) => {
-    setStocks((prev) => [...prev, stock]);
+    setStocks((prev) =>
+      editTarget ? prev.map((s) => (s.id === stock.id ? stock : s)) : [...prev, stock]
+    );
+    setEditTarget(null);
     setView('info');
   };
 
-  const nav = (v: View) => () => setView(v);
+  const handleEdit = (stock: Stock) => {
+    setEditTarget(stock);
+    setView('edit');
+  };
+
+  const nav = (v: View) => () => { setEditTarget(null); setView(v); };
 
   return (
     <div className="app">
@@ -50,11 +59,16 @@ export default function App() {
       </header>
 
       <main className="app-main">
-        {view === 'add' && (
-          <StockForm onSave={handleSave} onCancel={nav('info')} />
+        {(view === 'add' || view === 'edit') && (
+          <StockForm initial={editTarget ?? undefined} onSave={handleSave} onCancel={nav('info')} />
         )}
         {view === 'info' && (
-          <StockInfoBoard stocks={stocks} hasApiKey={!!apiKey} getStockInfo={getStockInfo} />
+          <StockInfoBoard
+            stocks={stocks}
+            hasApiKey={!!apiKey}
+            getStockInfo={getStockInfo}
+            onEdit={handleEdit}
+          />
         )}
         {view === 'settings' && (
           <ApiKeySetup apiKey={apiKey} onSave={setApiKey} />
