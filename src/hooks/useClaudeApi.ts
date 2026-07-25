@@ -27,12 +27,24 @@ export function useClaudeApi() {
   };
 
   const extractTrailingJson = (text: string) => {
-    const start = text.lastIndexOf('{');
-    const end = text.lastIndexOf('}');
-    if (start === -1 || end === -1 || end < start) {
-      throw new Error('AIの回答からJSONを取得できませんでした。もう一度お試しください');
+    // Find the last "}" then walk backward counting brace depth, so a JSON
+    // object containing nested objects/arrays (e.g. companies: [{...}]) is
+    // bounded by its own outer braces instead of an inner one's.
+    const trimmed = text.trimEnd();
+    const end = trimmed.lastIndexOf('}');
+    if (end === -1) throw new Error('AIの回答からJSONを取得できませんでした。もう一度お試しください');
+    let depth = 0;
+    let start = -1;
+    for (let i = end; i >= 0; i--) {
+      const ch = trimmed[i];
+      if (ch === '}') depth++;
+      else if (ch === '{') {
+        depth--;
+        if (depth === 0) { start = i; break; }
+      }
     }
-    return JSON.parse(text.slice(start, end + 1));
+    if (start === -1) throw new Error('AIの回答からJSONを取得できませんでした。もう一度お試しください');
+    return JSON.parse(trimmed.slice(start, end + 1));
   };
 
   const parseScreenshot = async (base64: string, mediaType: string) => {
@@ -94,33 +106,40 @@ JSON配列のみを返してください（説明文は不要）。
     };
   };
 
-  const getCompetitiveAnalysis = async (ticker: string, name: string) => {
+  const getSectorComparison = async (
+    sectorName: string,
+    stocks: Array<{ ticker: string; name: string }>
+  ) => {
     const today = new Date().toISOString().slice(0, 10);
+    const holdingsList = stocks.map((s) => `- ${s.ticker}: ${s.name}`).join('\n');
     const text = await callClaude({
       model: 'claude-sonnet-5',
       max_tokens: 8192,
       thinking: { type: 'disabled' },
-      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }],
+      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 4 }],
       messages: [{
         role: 'user',
-        content: `${ticker}（${name}）が属する業界・分野について、Web検索ツールを使って実際に検索してください。本日は${today}です。銘柄を1つに絞った比較ではなく、その分野全体の状況を踏まえて回答してください。
+        content: `「${sectorName}」という分野について、Web検索ツールを使って調べてください。本日は${today}です。
+
+保有銘柄一覧（この中に${sectorName}分野に該当する銘柄があれば比較対象に含めてください）:
+${holdingsList}
+
+上記の保有銘柄のうち${sectorName}分野に該当するものに加えて、その分野の主要な未保有企業も含めて、分野内の企業を比較してください。
 
 検索が終わったら、検索結果の要約・説明・前置きなどの文章は一切書かず、次のJSONオブジェクト1つだけを出力してください。JSON以外の文字は絶対に出力しないでください。
 
-- field: ${ticker}が属する分野・業界名
-- overview: その分野全体の概況（主なプレイヤーや市場動向など。2〜3文）
-- position: ${name}のその分野内での相対的な立ち位置（強み・弱みを含めて2〜3文）
+- summary: ${sectorName}分野全体の概況（主なプレイヤーや市場動向など。2〜3文）
+- companies: 比較する企業の配列（3〜6社程度）。各要素は {"name":"企業名","ticker":"ティッカー（不明ならnull）","held":上記保有銘柄に含まれるならtrue、そうでなければfalse,"analysis":"その企業の強み・弱み・立ち位置（2〜3文）"}
 
 出力形式:
-{"field":"...","overview":"...","position":"..."}`,
+{"summary":"...","companies":[{"name":"...","ticker":"...","held":true,"analysis":"..."}]}`,
       }],
     });
     return extractTrailingJson(text) as {
-      field: string;
-      overview: string;
-      position: string;
+      summary: string;
+      companies: Array<{ name: string; ticker: string | null; held: boolean; analysis: string }>;
     };
   };
 
-  return { apiKey, setApiKey, parseScreenshot, getStockInfo, getCompetitiveAnalysis };
+  return { apiKey, setApiKey, parseScreenshot, getStockInfo, getSectorComparison };
 }
