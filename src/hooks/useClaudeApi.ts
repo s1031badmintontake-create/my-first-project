@@ -4,26 +4,38 @@ export function useClaudeApi() {
   const [apiKey, setApiKey] = useLocalStorage<string>('claudeApiKey', '');
 
   const callClaude = async (body: object) => {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error?.message ?? `API error ${res.status}`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error?.message ?? `API error ${res.status}`);
+      }
+      const data = await res.json();
+      const textBlocks = (data.content as Array<{ type: string; text?: string }>).filter(
+        (b) => b.type === 'text' && b.text
+      );
+      if (textBlocks.length === 0) throw new Error('応答にテキストが含まれていません');
+      return textBlocks.map((b) => b.text).join('\n');
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw new Error('応答がタイムアウトしました（2分経過）。質問を短くするか、もう一度お試しください');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    const data = await res.json();
-    const textBlocks = (data.content as Array<{ type: string; text?: string }>).filter(
-      (b) => b.type === 'text' && b.text
-    );
-    if (textBlocks.length === 0) throw new Error('応答にテキストが含まれていません');
-    return textBlocks.map((b) => b.text).join('\n');
   };
 
   const extractTrailingJson = (text: string) => {
