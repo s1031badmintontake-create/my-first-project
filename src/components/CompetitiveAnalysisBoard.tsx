@@ -24,7 +24,7 @@ export default function CompetitiveAnalysisBoard({ stocks, hasApiKey, askAboutSe
   const [sectors, setSectors] = useLocalStorage<string[]>('competitiveSectors', DEFAULT_SECTORS);
   const [newSector, setNewSector] = useState('');
 
-  const [questionInputs, setQuestionInputs] = useState<Record<string, string>>({});
+  const [questionInputs, setQuestionInputs] = useLocalStorage<Record<string, string>>('sectorQuestionInputs', {});
   const [qaCache, setQaCache] = useLocalStorage<Record<string, SectorQa>>('sectorQuestionCache', {});
   const [qaPending, setQaPending] = useState<Record<string, 'loading' | 'error'>>({});
   const [qaErrors, setQaErrors] = useState<Record<string, string>>({});
