@@ -106,41 +106,6 @@ JSON配列のみを返してください（説明文は不要）。
     };
   };
 
-  const getSectorComparison = async (
-    sectorName: string,
-    stocks: Array<{ ticker: string; name: string }>
-  ) => {
-    const today = new Date().toISOString().slice(0, 10);
-    const holdingsList = stocks.map((s) => `- ${s.ticker}: ${s.name}`).join('\n');
-    const text = await callClaude({
-      model: 'claude-sonnet-5',
-      max_tokens: 8192,
-      thinking: { type: 'disabled' },
-      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 4 }],
-      messages: [{
-        role: 'user',
-        content: `「${sectorName}」という分野について、Web検索ツールを使って調べてください。本日は${today}です。
-
-保有銘柄一覧（この中に${sectorName}分野に該当する銘柄があれば比較対象に含めてください）:
-${holdingsList}
-
-上記の保有銘柄のうち${sectorName}分野に該当するものに加えて、その分野の主要な未保有企業も含めて、分野内の企業を比較してください。
-
-検索が終わったら、検索結果の要約・説明・前置きなどの文章は一切書かず、次のJSONオブジェクト1つだけを出力してください。JSON以外の文字は絶対に出力しないでください。
-
-- summary: ${sectorName}分野全体の概況（主なプレイヤーや市場動向など。2〜3文）
-- companies: 比較する企業の配列（3〜6社程度）。各要素は {"name":"企業名","ticker":"ティッカー（不明ならnull）","held":上記保有銘柄に含まれるならtrue、そうでなければfalse,"analysis":"その企業の強み・弱み・立ち位置（2〜3文）"}
-
-出力形式:
-{"summary":"...","companies":[{"name":"...","ticker":"...","held":true,"analysis":"..."}]}`,
-      }],
-    });
-    return extractTrailingJson(text) as {
-      summary: string;
-      companies: Array<{ name: string; ticker: string | null; held: boolean; analysis: string }>;
-    };
-  };
-
   const askAboutSector = async (
     sectorName: string,
     question: string,
@@ -167,5 +132,5 @@ ${holdingsList}
     });
   };
 
-  return { apiKey, setApiKey, parseScreenshot, getStockInfo, getSectorComparison, askAboutSector };
+  return { apiKey, setApiKey, parseScreenshot, getStockInfo, askAboutSector };
 }
