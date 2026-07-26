@@ -141,5 +141,31 @@ ${holdingsList}
     };
   };
 
-  return { apiKey, setApiKey, parseScreenshot, getStockInfo, getSectorComparison };
+  const askAboutSector = async (
+    sectorName: string,
+    question: string,
+    stocks: Array<{ ticker: string; name: string }>
+  ) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const holdingsList = stocks.map((s) => `- ${s.ticker}: ${s.name}`).join('\n');
+    return callClaude({
+      model: 'claude-sonnet-5',
+      max_tokens: 4096,
+      thinking: { type: 'disabled' },
+      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }],
+      messages: [{
+        role: 'user',
+        content: `「${sectorName}」という分野について、Web検索ツールを使って調べたうえで、以下の質問に日本語で回答してください。本日は${today}です。
+
+保有銘柄一覧（関係する場合のみ言及してください）:
+${holdingsList}
+
+質問: ${question}
+
+回答は自由な文章で構いません。JSON形式にする必要はありません。`,
+      }],
+    });
+  };
+
+  return { apiKey, setApiKey, parseScreenshot, getStockInfo, getSectorComparison, askAboutSector };
 }

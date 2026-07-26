@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import { RefreshCw, Layers, X, PlusCircle } from 'lucide-react';
+import { RefreshCw, Layers, X, PlusCircle, MessageCircleQuestion } from 'lucide-react';
 import type { Stock } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export interface SectorComparison {
   summary: string;
   companies: Array<{ name: string; ticker: string | null; held: boolean; analysis: string }>;
+}
+
+interface SectorQa {
+  question: string;
+  answer: string;
 }
 
 interface Props {
@@ -15,16 +20,26 @@ interface Props {
     sectorName: string,
     stocks: Array<{ ticker: string; name: string }>
   ) => Promise<SectorComparison>;
+  askAboutSector: (
+    sectorName: string,
+    question: string,
+    stocks: Array<{ ticker: string; name: string }>
+  ) => Promise<string>;
 }
 
 const DEFAULT_SECTORS = ['宇宙', '量子', 'フィジカルAI'];
 
-export default function CompetitiveAnalysisBoard({ stocks, hasApiKey, getSectorComparison }: Props) {
+export default function CompetitiveAnalysisBoard({ stocks, hasApiKey, getSectorComparison, askAboutSector }: Props) {
   const [sectors, setSectors] = useLocalStorage<string[]>('competitiveSectors', DEFAULT_SECTORS);
   const [cache, setCache] = useLocalStorage<Record<string, SectorComparison>>('sectorComparisonCache', {});
   const [pending, setPending] = useState<Record<string, 'loading' | 'error'>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [newSector, setNewSector] = useState('');
+
+  const [questionInputs, setQuestionInputs] = useState<Record<string, string>>({});
+  const [qaCache, setQaCache] = useLocalStorage<Record<string, SectorQa>>('sectorQuestionCache', {});
+  const [qaPending, setQaPending] = useState<Record<string, 'loading' | 'error'>>({});
+  const [qaErrors, setQaErrors] = useState<Record<string, string>>({});
 
   const addSector = () => {
     const name = newSector.trim();
@@ -36,6 +51,11 @@ export default function CompetitiveAnalysisBoard({ stocks, hasApiKey, getSectorC
   const removeSector = (name: string) => {
     setSectors((prev) => prev.filter((s) => s !== name));
     setCache((c) => {
+      const next = { ...c };
+      delete next[name];
+      return next;
+    });
+    setQaCache((c) => {
       const next = { ...c };
       delete next[name];
       return next;
@@ -58,6 +78,28 @@ export default function CompetitiveAnalysisBoard({ stocks, hasApiKey, getSectorC
     } catch (err) {
       setPending((p) => ({ ...p, [sectorName]: 'error' }));
       setErrors((e) => ({ ...e, [sectorName]: err instanceof Error ? err.message : '取得に失敗しました' }));
+    }
+  };
+
+  const askSector = async (sectorName: string) => {
+    const question = (questionInputs[sectorName] ?? '').trim();
+    if (!question) return;
+    setQaPending((p) => ({ ...p, [sectorName]: 'loading' }));
+    try {
+      const answer = await askAboutSector(
+        sectorName,
+        question,
+        stocks.map((s) => ({ ticker: s.ticker, name: s.name }))
+      );
+      setQaCache((c) => ({ ...c, [sectorName]: { question, answer } }));
+      setQaPending((p) => {
+        const next = { ...p };
+        delete next[sectorName];
+        return next;
+      });
+    } catch (err) {
+      setQaPending((p) => ({ ...p, [sectorName]: 'error' }));
+      setQaErrors((e) => ({ ...e, [sectorName]: err instanceof Error ? err.message : '取得に失敗しました' }));
     }
   };
 
@@ -148,6 +190,45 @@ export default function CompetitiveAnalysisBoard({ stocks, hasApiKey, getSectorC
 
             {!result && !status && hasApiKey && (
               <p className="table-hint">「取得」を押すとこの分野内の企業比較が表示されます</p>
+            )}
+
+            {hasApiKey && (
+              <div className="sector-qa">
+                <div className="sector-add-row">
+                  <input
+                    type="text"
+                    value={questionInputs[sectorName] ?? ''}
+                    onChange={(e) => setQuestionInputs((q) => ({ ...q, [sectorName]: e.target.value }))}
+                    onKeyDown={(e) => { if (e.key === 'Enter') askSector(sectorName); }}
+                    placeholder="この分野について自由に質問する（例: 今一番狙い目はどこ？）"
+                  />
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => askSector(sectorName)}
+                    disabled={qaPending[sectorName] === 'loading'}
+                  >
+                    <MessageCircleQuestion size={14} className={qaPending[sectorName] === 'loading' ? 'spinning' : ''} />
+                    質問する
+                  </button>
+                </div>
+
+                {qaPending[sectorName] === 'loading' && (
+                  <div className="detail-loading">
+                    <RefreshCw size={16} className="spinning" /> 回答を考え中…
+                  </div>
+                )}
+
+                {qaPending[sectorName] === 'error' && (
+                  <p className="error-text">⚠ {qaErrors[sectorName]}</p>
+                )}
+
+                {qaCache[sectorName] && (
+                  <section className="detail-section sector-qa-answer">
+                    <h3>Q. {qaCache[sectorName].question}</h3>
+                    <p>{qaCache[sectorName].answer}</p>
+                  </section>
+                )}
+              </div>
             )}
           </div>
         );
