@@ -24,7 +24,7 @@ function StockChart({ ticker, currency }: Props) {
       height: 220,
       locale: 'ja',
       dateRange: '12M',
-      colorTheme: 'light',
+      colorTheme: 'dark',
       isTransparent: false,
       autosize: true,
     });

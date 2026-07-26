@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { RefreshCw, TrendingUp, Newspaper, Link2, Pencil } from 'lucide-react';
 import type { Stock } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { formatCurrency } from '../utils';
+import { calcGain, formatCurrency, formatPercent } from '../utils';
 import StockChart from './StockChart';
 
 export interface StockInfo {
@@ -58,6 +58,7 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo, onEdit
       {stocks.map((stock) => {
         const info = cache[stock.id];
         const status = pending[stock.id];
+        const { gainPercent } = calcGain(stock);
         return (
           <div key={stock.id} className="info-card">
             <div className="detail-title">
@@ -65,6 +66,7 @@ export default function StockInfoBoard({ stocks, hasApiKey, getStockInfo, onEdit
               <span className={`badge badge-${stock.currency.toLowerCase()}`}>{stock.currency}</span>
               <span className="detail-name">{stock.name}</span>
               <span className="detail-price">{formatCurrency(stock.currentPrice, stock.currency)}</span>
+              <span className={`price-delta ${gainPercent >= 0 ? 'up' : 'down'}`}>{formatPercent(gainPercent)}</span>
               <button className="icon-btn" title="編集" onClick={() => onEdit(stock)}>
                 <Pencil size={16} />
               </button>
